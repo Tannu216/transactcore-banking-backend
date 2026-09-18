@@ -52,7 +52,7 @@ async function sendRegistrationEmail(useEmail , name){
 
 async function sendTransactionEmail(userEmail, name , amount, toAccount){
   const subject = 'Transaction Successful!';
-  const text = `Hello ${name},\n\nYour transaction of ${amont} to account ${toAccount} was successful.\n\nBest regards,\nThe Transactcore-Banking Team`;
+  const text = `Hello ${name},\n\nYour transaction of ${amount} to account ${toAccount} was successful.\n\nBest regards,\nThe Transactcore-Banking Team`;
   const html = `<p>Hello ${name},</p><p>Your transaction of ${amount} to account ${toAccount} was successful.</p><p>Best regards,<br>The Transactcore-Banking Team</p>`;
 
   await sendEmail(useEmail,subject,text,html);
@@ -61,7 +61,7 @@ async function sendTransactionEmail(userEmail, name , amount, toAccount){
 async function sendTransactionFailureEmail(useEmail, name, amount, toAccount){
   const subject = 'Transaction Failed';
   const text = `Hello ${name},\n\nWe regret to inform you that your transaction of ${amount} to account ${toAccount} has been failed.`
-  const html = `<p>Hello ${name},</p><p>We regret to inform you that your transaction of ${amont} to account ${toAccount} has been failde</p>`
+  const html = `<p>Hello ${name},</p><p>We regret to inform you that your transaction of ${amount} to account ${toAccount} has been failed.</p>`
 
   await sendEmail(useEmail, subject,text,html);
 }
