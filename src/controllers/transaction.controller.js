@@ -86,15 +86,16 @@ async function createTransaction(req,res){
     // Start MongoDB transaction
      const session = await mongoose.startSession()
      session.startTransaction()
-
+    let transaction;
+    try{
     // 5. Create transaction (Pending)
-    const transaction = new transactionModel({
+        transaction = (await transactionModel.create([{
         fromAccount,
         toAccount,
         amount,
         idempotencyKey,
         status: "PENDING"
-    })
+    }],{session}))[0]
 
     const debitLedgerEntry = await ledgerModel.create([{
         account: fromAccount,
@@ -103,6 +104,11 @@ async function createTransaction(req,res){
         type: "DEBIT"
     }], {session})
 
+    await (() => {
+        return new Promise((resolve) => setTimeout(resolve, 10*1000));
+    })()
+
+    
     const creditLedgerEntry = await ledgerModel.create([{
         account: toAccount,
         amount: amount,
@@ -110,11 +116,24 @@ async function createTransaction(req,res){
         type:"CREDIT"
     }], {session})
     
-    transaction.status = "COMPLETED"
-    await transaction.save({session})
+    // transaction.status = "COMPLETED"
+    // await transaction.save({session})
+
+    await transactionModel.findOneAndUpdate(
+        {_id: transaction._id},
+        {status: "COMPLETED"},
+        {session}
+    )
 
     await session.commitTransaction()
     session.endSession()
+}
+catch(error){
+    return res.status(400).json({
+        message: "Transaction is Pending due to some issue , please try again",
+        error: error.message
+    })
+}
 
     //10. Send email notification to both users
 
@@ -202,9 +221,6 @@ return res.status(201).json({
 })
 
 }
-
-
-
 
 
 module.exports = {

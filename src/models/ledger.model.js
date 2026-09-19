@@ -38,7 +38,7 @@ function preventLedgerModification(){
 }
 
 ledgerSchema.pre('findOneAndUpdate',preventLedgerModification);
-ledgerSchema.pre('updareOne' , preventLedgerModification);
+ledgerSchema.pre('updateOne' , preventLedgerModification);
 ledgerSchema.pre('deleteOne',preventLedgerModification);
 ledgerSchema.pre('remove',preventLedgerModification);
 ledgerSchema.pre('deleteMany',preventLedgerModification);
